@@ -58,6 +58,12 @@
   }
 }
 
+.logo-initials {
+  font-size: 13px;
+  font-weight: bold;
+  color: #0b2e59;
+}
+
 .action-cell { 
   position: relative; 
   width: 50px; 
@@ -67,11 +73,11 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 4px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 18px;
+  color: #888;
 
   &:hover { background: var(--color-background); }
 }
@@ -168,7 +174,8 @@
 
 .info-icon {
   margin-left: 4px;
-  vertical-align: middle;
+  font-size: 13px;
+  color: #888;
 }
 
 @media (max-width: 600px) {
@@ -186,7 +193,69 @@
     gap: var(--spacing-md);
   }
 
-  .table-container { 
-    overflow-x: auto; 
+  // En móvil cada fila de la tabla se muestra como una tarjeta
+  .product-table {
+    thead { display: none; }
+
+    tbody { display: block; padding: 12px; }
+
+    tr { display: block; }
+
+    .product-row {
+      position: relative;
+      margin-bottom: 12px;
+      padding: 12px;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      background: white;
+    }
+
+    td {
+      display: block;
+      padding: 4px 0;
+      border: none;
+    }
+
+    // Cabecera de la tarjeta: logo + nombre en la misma línea
+    .logo-cell,
+    .name-cell {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .logo-cell { margin-right: 10px; }
+
+    .name-cell {
+      font-weight: bold;
+      max-width: calc(100% - 100px);
+    }
+
+    // Resto de campos: etiqueta a la izquierda, valor a la derecha
+    td[data-label] {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      text-align: right;
+
+      &::before {
+        content: attr(data-label);
+        color: var(--color-text-muted);
+        text-align: left;
+      }
+    }
+
+    td[data-label="Descripción"] {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    // Menú de acciones en la esquina superior derecha
+    .action-cell {
+      position: absolute;
+      top: 12px;
+      right: 8px;
+      width: auto;
+    }
   }
 }

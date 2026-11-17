@@ -111,4 +111,9 @@ describe('ProductListComponent', () => {
     component.navigateToEdit('uno');
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/products/edit', 'uno']);
   });
+
+  it('should get the initials of the product name', () => {
+    expect(component.getInitials('Tarjeta Credito')).toBe('TC');
+    expect(component.getInitials('inicial')).toBe('IN');
+  });
 });

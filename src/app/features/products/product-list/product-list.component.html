@@ -10,6 +10,8 @@
     <button class="btn btn-primary" (click)="navigateToAdd()">Agregar</button>
   </div>
 
+  <p class="alert" *ngIf="errorMessage">{{ errorMessage }}</p>
+
   <div class="card">
     <app-skeleton-loader [show]="isLoading" [rows]="pageSize"></app-skeleton-loader>
 
@@ -19,52 +21,31 @@
           <tr>
             <th>Logo</th>
             <th>Nombre del producto</th>
-            <th>
-              Descripción
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-left: 4px;">
-                <circle cx="12" cy="12" r="10" stroke="#888" stroke-width="2"/>
-                <path d="M12 16V12" stroke="#888" stroke-width="2" stroke-linecap="round"/>
-                <circle cx="12" cy="8" r="1" fill="#888"/>
-              </svg>
-            </th>
-            <th>
-              Fecha de liberación
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-left: 4px;">
-                <circle cx="12" cy="12" r="10" stroke="#888" stroke-width="2"/>
-                <path d="M12 16V12" stroke="#888" stroke-width="2" stroke-linecap="round"/>
-                <circle cx="12" cy="8" r="1" fill="#888"/>
-              </svg>
-            </th>
-            <th>
-              Fecha de reestructuración
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-left: 4px;">
-                <circle cx="12" cy="12" r="10" stroke="#888" stroke-width="2"/>
-                <path d="M12 16V12" stroke="#888" stroke-width="2" stroke-linecap="round"/>
-                <circle cx="12" cy="8" r="1" fill="#888"/>
-              </svg>
-            </th>
+            <th>Descripción <i class="fa-solid fa-circle-info info-icon"></i></th>
+            <th>Fecha de liberación <i class="fa-solid fa-circle-info info-icon"></i></th>
+            <th>Fecha de reestructuración <i class="fa-solid fa-circle-info info-icon"></i></th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let product of displayedProducts">
-            <td>
+          <tr *ngFor="let product of displayedProducts" class="product-row">
+            <td class="logo-cell">
               <div class="logo-container">
-                <img [src]="product.logo" alt="{{ product.name }}" (error)="product.logo = 'https://via.placeholder.com/40'" />
+                <img *ngIf="!brokenLogos.has(product.id); else initials"
+                     [src]="product.logo" [alt]="product.logo" (error)="brokenLogos.add(product.id)" />
+                <ng-template #initials>
+                  <span class="logo-initials">{{ getInitials(product.logo) }}</span>
+                </ng-template>
               </div>
             </td>
-            <td>{{ product.name }}</td>
-            <td>{{ product.description }}</td>
-            <td>{{ product.date_release | date:'dd/MM/yyyy' }}</td>
-            <td>{{ product.date_revision | date:'dd/MM/yyyy' }}</td>
+            <td class="name-cell">{{ product.name }}</td>
+            <td data-label="Descripción">{{ product.description }}</td>
+            <td data-label="Fecha de liberación">{{ product.date_release | date:'dd/MM/yyyy' }}</td>
+            <td data-label="Fecha de reestructuración">{{ product.date_revision | date:'dd/MM/yyyy' }}</td>
             <td class="action-cell">
               <div class="menu-container">
                 <button class="icon-btn" (click)="toggleMenu(product.id, $event)">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="6" r="2" fill="#888"/>
-                    <circle cx="12" cy="12" r="2" fill="#888"/>
-                    <circle cx="12" cy="18" r="2" fill="#888"/>
-                  </svg>
+                  <i class="fa-solid fa-ellipsis-vertical"></i>
                 </button>
                 <div class="dropdown-menu" *ngIf="activeMenuId === product.id">
                   <button class="dropdown-item" (click)="navigateToEdit(product.id)">Editar</button>

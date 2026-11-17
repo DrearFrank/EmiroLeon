@@ -137,19 +137,10 @@ describe('ProductFormComponent', () => {
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/products']);
   });
 
-  it('should show backend validation errors in the related field', () => {
+  it('should show an error message when the ID already exists in the backend', () => {
     const backendError = new HttpErrorResponse({
       status: 400,
-      error: {
-        errors: [
-          {
-            property: 'name',
-            constraints: {
-              minLength: 'name must be longer than or equal to 6 characters'
-            }
-          }
-        ]
-      }
+      error: { message: 'Duplicate identifier found in the database' }
     });
 
     component.productForm.patchValue({
@@ -164,7 +155,6 @@ describe('ProductFormComponent', () => {
     component.createOrUpdate();
     fixture.detectChanges();
 
-    expect(component.errorMessage).toBe('No se pudo registrar el producto. Revisa los campos marcados.');
-    expect(component.productForm.get('name')?.errors?.['api']).toBe('Nombre debe tener mínimo 6 caracteres.');
+    expect(component.errorMessage).toBe('No se pudo registrar el producto. Ya existe un producto con ese ID.');
   });
 });

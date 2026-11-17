@@ -22,7 +22,6 @@
             @if (productForm.get('id')?.errors?.['minlength']) { <span>Mínimo 3 caracteres.</span> }
             @if (productForm.get('id')?.errors?.['maxlength']) { <span>Máximo 10 caracteres.</span> }
             @if (productForm.get('id')?.errors?.['idExists']) { <span>ID no válido! (Ya existe)</span> }
-            @if (productForm.get('id')?.errors?.['api']) { <span>{{ productForm.get('id')?.errors?.['api'] }}</span> }
           </div>
           }
         </div>
@@ -35,7 +34,6 @@
             @if (productForm.get('name')?.errors?.['required']) { <span>Este campo es requerido!</span> }
             @if (productForm.get('name')?.errors?.['minlength']) { <span>Mínimo 6 caracteres.</span> }
             @if (productForm.get('name')?.errors?.['maxlength']) { <span>Máximo 100 caracteres.</span> }
-            @if (productForm.get('name')?.errors?.['api']) { <span>{{ productForm.get('name')?.errors?.['api'] }}</span> }
           </div>
           }
         </div>
@@ -56,7 +54,6 @@
             @if (productForm.get('description')?.errors?.['required']) { <span>Este campo es requerido!</span> }
             @if (productForm.get('description')?.errors?.['minlength']) { <span>Mínimo 10 caracteres.</span> }
             @if (productForm.get('description')?.errors?.['maxlength']) { <span>Máximo 200 caracteres.</span> }
-            @if (productForm.get('description')?.errors?.['api']) { <span>{{ productForm.get('description')?.errors?.['api'] }}</span> }
           </div>
           }
         </div>
@@ -68,7 +65,6 @@
           @if (isInvalid('logo')) {
           <div class="error-message">
             @if (productForm.get('logo')?.errors?.['required']) { <span>Este campo es requerido!</span> }
-            @if (productForm.get('logo')?.errors?.['api']) { <span>{{ productForm.get('logo')?.errors?.['api'] }}</span> }
           </div>
           }
         </div>
@@ -83,7 +79,6 @@
           <div class="error-message">
             @if (productForm.get('date_release')?.errors?.['required']) { <span>Este campo es requerido!</span> }
             @if (productForm.get('date_release')?.errors?.['invalidDate']) { <span>La fecha debe ser igual o mayor a la actual.</span> }
-            @if (productForm.get('date_release')?.errors?.['api']) { <span>{{ productForm.get('date_release')?.errors?.['api'] }}</span> }
           </div>
           }
         </div>
@@ -92,7 +87,6 @@
           <input type="date" id="date_revision" formControlName="date_revision" class="form-control" />
           @if (isInvalid('date_revision')) {
           <div class="error-message">
-            @if (productForm.get('date_revision')?.errors?.['api']) { <span>{{ productForm.get('date_revision')?.errors?.['api'] }}</span> }
           </div>
           }
         </div>

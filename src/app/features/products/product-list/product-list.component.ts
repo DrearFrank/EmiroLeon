@@ -35,6 +35,9 @@ export class ProductListComponent implements OnInit {
   showDeleteModal = false;
   productToDelete: Product | null = null;
 
+  // Ids de productos cuyo logo no se pudo cargar (se muestran las iniciales)
+  brokenLogos = new Set<string>();
+
   get totalPages(): number {
     return Math.ceil(this.filteredProducts.length / this.pageSize) || 1;
   }
@@ -115,6 +118,14 @@ export class ProductListComponent implements OnInit {
     } else {
       this.activeMenuId = productId;
     }
+  }
+
+  getInitials(name: string): string {
+    const words = name.trim().split(' ').filter(word => word);
+    if (words.length > 1) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    return name.trim().substring(0, 2).toUpperCase();
   }
 
   closeMenu(): void {

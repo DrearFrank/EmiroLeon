@@ -8,18 +8,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProductService } from '../../../core/services/product.service';
 import { Product } from '../../../core/models/product.model';
-
 import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
-
-interface ApiValidationError {
-  property: string;
-  constraints?: Record<string, string>;
-}
-
-interface ApiErrorResponse {
-  message?: string;
-  errors?: ApiValidationError[];
-}
 
 @Component({
   selector: 'app-product-form',
@@ -153,7 +142,7 @@ export class ProductFormComponent implements OnInit {
           this.cdr.markForCheck();
           this.router.navigate(['/products']);
         },
-        error: (error: unknown) => this.handleSubmitError(error, 'No se pudo actualizar el producto.')
+        error: (error: HttpErrorResponse) => this.handleSubmitError(error, 'No se pudo actualizar el producto.')
       });
     } else {
       this.productService.createProduct(formValue).subscribe({
@@ -162,7 +151,7 @@ export class ProductFormComponent implements OnInit {
           this.cdr.markForCheck();
           this.router.navigate(['/products']);
         },
-        error: (error: unknown) => this.handleSubmitError(error, 'No se pudo registrar el producto.')
+        error: (error: HttpErrorResponse) => this.handleSubmitError(error, 'No se pudo registrar el producto.')
       });
     }
   }
@@ -196,78 +185,22 @@ export class ProductFormComponent implements OnInit {
     return value ? value.split('T')[0] : '';
   }
 
-  private handleSubmitError(error: unknown, message: string): void {
-    this.applyApiValidationErrors(error);
-    this.errorMessage = `${message} ${this.getErrorReason(error)}`.trim();
+  private handleSubmitError(error: HttpErrorResponse, message: string): void {
+    this.errorMessage = `${message} ${this.getErrorReason(error)}`;
     this.isLoading = false;
     this.cdr.markForCheck();
   }
 
-  private applyApiValidationErrors(error: unknown): void {
-    const validationErrors = this.getApiValidationErrors(error);
-
-    validationErrors.forEach(validationError => {
-      const control = this.productForm.get(validationError.property);
-      const constraintMessage = Object.values(validationError.constraints ?? {})[0];
-
-      if (!control || !constraintMessage) {
-        return;
-      }
-
-      control.setErrors({
-        ...control.errors,
-        api: this.getApiFieldMessage(validationError.property, constraintMessage)
-      });
-      control.markAsTouched();
-    });
-  }
-
-  private getErrorReason(error: unknown): string {
-    if (!(error instanceof HttpErrorResponse)) {
-      return '';
-    }
-
+  private getErrorReason(error: HttpErrorResponse): string {
     if (error.status === 0) {
       return 'No hay conexión con el servidor.';
     }
-
-    const response = error.error as ApiErrorResponse | null;
-
-    if (response?.message?.startsWith('Duplicate identifier')) {
+    if (error.status === 400 && error.error?.message?.includes('Duplicate identifier')) {
       return 'Ya existe un producto con ese ID.';
     }
-
-    if (response?.errors?.length) {
-      return 'Revisa los campos marcados.';
+    if (error.status === 400) {
+      return 'Revisa los datos ingresados.';
     }
-
-    return `Error ${error.status} del servidor.`;
-  }
-
-  private getApiValidationErrors(error: unknown): ApiValidationError[] {
-    if (!(error instanceof HttpErrorResponse)) {
-      return [];
-    }
-
-    const response = error.error as ApiErrorResponse | null;
-    return response?.errors ?? [];
-  }
-
-  private getApiFieldMessage(property: string, message: string): string {
-    const labels: Record<string, string> = {
-      id: 'ID',
-      name: 'Nombre',
-      description: 'Descripción',
-      logo: 'Logo',
-      date_release: 'Fecha de liberación',
-      date_revision: 'Fecha de revisión'
-    };
-    const minLength = message.match(/longer than or equal to (\d+) characters/);
-
-    if (minLength) {
-      return `${labels[property] ?? property} debe tener mínimo ${minLength[1]} caracteres.`;
-    }
-
-    return `No se pudo registrar ${labels[property]?.toLowerCase() ?? property}.`;
+    return 'Intenta nuevamente más tarde.';
   }
 }
